@@ -19,7 +19,7 @@ public class HtmlToMarkdownTest {
         String html = readFile("test-simple-paragraph.html");
         String result = HtmlToMarkdown.htmlToMarkdown(html);
         
-        assertEquals("Это простой параграф с текстом.", result.trim());
+        assertEquals("Это простой абзац с текстом.", result.trim());
     }
 
     @Test
