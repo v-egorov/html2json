@@ -106,13 +106,12 @@ public class HtmlToTextTest {
 
     @Test
     public void testNestedElements() throws IOException {
-        String html = readFile("test-nested-lists.html");
+        String html = readFile("test-nested-elements.html");
         String result = converter.htmlToPlainText(html);
         
-        assertTrue(result.contains("ссылкой"));
-        assertTrue(result.contains("моноширинным"));
-        assertTrue(result.contains("преформатированным текстом"));
-        assertTrue(result.contains("жирный текст в span"));
+        assertTrue(result.contains("жирной ссылкой"));
+        assertTrue(result.contains("курсивная ссылка"));
+        assertTrue(result.contains("сильный курсив в ссылке"));
     }
 
     @Test
