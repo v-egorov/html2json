@@ -146,19 +146,66 @@ public class HtmlToMarkdown {
                     StringBuilder innerText = new StringBuilder();
                     collectMarkdown(childElement, innerText);
                     if (!innerText.toString().trim().isEmpty()) {
-                        sb.append("**").append(innerText).append("**");
+                        String text = innerText.toString();
+                        if (sb.length() > 0 && !Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+                            sb.append(" ");
+                        }
+                        sb.append("**").append(text).append("**");
+                        // Проверить следующий текст и добавить пробел, если нужно
+                        int nextSiblingIndex = childElement.siblingIndex() + 1;
+                        if (nextSiblingIndex < element.childNodeSize()) {
+                            Node nextNode = element.childNode(nextSiblingIndex);
+                            if (nextNode instanceof TextNode) {
+                                String nextText = ((TextNode) nextNode).text();
+                                String trimmedNext = nextText.trim();
+                                if (!trimmedNext.isEmpty() && !Character.isWhitespace(text.charAt(text.length() - 1))) {
+                                    sb.append(" ");
+                                }
+                            }
+                        }
                     }
                 } else if ("i".equals(tagName) || "em".equals(tagName)) {
                     StringBuilder innerText = new StringBuilder();
                     collectMarkdown(childElement, innerText);
                     if (!innerText.toString().trim().isEmpty()) {
-                        sb.append("*").append(innerText).append("*");
+                        String text = innerText.toString();
+                        if (sb.length() > 0 && !Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+                            sb.append(" ");
+                        }
+                        sb.append("*").append(text).append("*");
+                        // Проверить следующий текст и добавить пробел, если нужно
+                        int nextSiblingIndex = childElement.siblingIndex() + 1;
+                        if (nextSiblingIndex < element.childNodeSize()) {
+                            Node nextNode = element.childNode(nextSiblingIndex);
+                            if (nextNode instanceof TextNode) {
+                                String nextText = ((TextNode) nextNode).text();
+                                String trimmedNext = nextText.trim();
+                                if (!trimmedNext.isEmpty() && !Character.isWhitespace(text.charAt(text.length() - 1))) {
+                                    sb.append(" ");
+                                }
+                            }
+                        }
                     }
                 } else if ("a".equals(tagName)) {
                     String href = childElement.attr("href");
                     String text = extractText(childElement);
                     if (!text.isEmpty() && !href.isEmpty()) {
+                        if (sb.length() > 0 && !Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+                            sb.append(" ");
+                        }
                         sb.append("[").append(text).append("](").append(href).append(")");
+                        // Проверить следующий текст и добавить пробел, если нужно
+                        int nextSiblingIndex = childElement.siblingIndex() + 1;
+                        if (nextSiblingIndex < element.childNodeSize()) {
+                            Node nextNode = element.childNode(nextSiblingIndex);
+                            if (nextNode instanceof TextNode) {
+                                String nextText = ((TextNode) nextNode).text();
+                                String trimmedNext = nextText.trim();
+                                if (!trimmedNext.isEmpty() && !Character.isWhitespace(text.charAt(text.length() - 1))) {
+                                    sb.append(" ");
+                                }
+                            }
+                        }
                     } else {
                         sb.append(text);
                     }
@@ -400,6 +447,9 @@ public class HtmlToMarkdown {
 
         String normalized = String.join("\n", result);
 
+        // Убираем пробелы перед знаками препинания
+        normalized = normalized.replaceAll(" ([.,!?;:])", "$1");
+        
         // Убираем лишние пробелы в начале/конце строк
         String[] finalLines = normalized.split("\n");
         StringBuilder finalResult = new StringBuilder();
