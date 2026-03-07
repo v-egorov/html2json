@@ -1,6 +1,6 @@
 # Makefile для проекта html2json
 
-.PHONY: all clean build test run check lint help
+.PHONY: all clean build test run check lint help e2e
 
 JAVA_VERSION := 17
 MAVEN_VERSION := 3.9.6
@@ -19,6 +19,10 @@ build:
 # Сборка с тестами
 test:
 	mvn test
+
+# E2E тестирование CLI
+e2e:
+	./run-e2e-tests.sh
 
 # Запуск проекта
 run:
@@ -43,7 +47,8 @@ help:
 	@echo "  make all      - Очистить, собрать и протестировать проект"
 	@echo "  make clean    - Очистить проект"
 	@echo "  make build    - Собрать проект"
-	@echo "  make test     - Запустить тесты"
+	@echo "  make test     - Запустить тесты (JUnit)"
+	@echo "  make e2e      - Запустить E2E тесты CLI"
 	@echo "  make run HTML_FILE=<file> - Запустить проект с HTML файлом"
 	@echo "  make check    - Полная проверка (сборка + тесты + форматирование)"
 	@echo "  make help     - Показать эту справку"
