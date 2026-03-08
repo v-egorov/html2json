@@ -9,10 +9,13 @@ import org.jsoup.nodes.TextNode;
 import java.util.regex.Pattern;
 
 /**
- * Утилита для преобразования HTML фрагментов в плоский текст (plain text).
+ * Утилита для преобразования HTML фрагментов
+ * в плоский текст (plain text).
  *
- * Предназначена для использования при сериализации данных в JSON для REST API.
- * Обрабатывает базовые HTML элементы: абзацы, списки, переносы строк,
+ * Предназначена для использования при сериализации
+ * данных в JSON для REST API.
+ * Обрабатывает базовые HTML элементы: абзацы,
+ * списки, переносы строк,
  * а также нормализует пробелы и экранированные символы.
  *
  * Пример использования:
@@ -21,18 +24,20 @@ import java.util.regex.Pattern;
  * String text = HtmlToText.htmlToPlainText(html);
  * </pre>
  *
- * Функция может быть легко перенесена в другой проект, так как:
+ * Функция может быть перенесена в другой проект, так как:
  * - Не имеет внешних зависимостей кроме Jsoup
  * - Не использует глобальное состояние
  * - Имеет чистый API
  *
  * Метод htmlToPlainText возвращает текст с реальными переводами строк.
- * Метод htmlToPlainTextForJson возвращает экранированную строку для JSON.
+ * Метод htmlToPlainTextForJson возвращает экранированную
+ * строку для JSON.
  */
 public class HtmlToText {
 
     /**
-     * Шаблон для определения блоков, требующих переноса строки перед.
+     * Шаблон для определения блоков,
+     * требующих переноса строки перед.
      */
     private static final Pattern BLOCK_START_PATTERN = Pattern.compile("^(?!\\s)[^\\s]");
 
@@ -58,11 +63,13 @@ public class HtmlToText {
     }
 
     /**
-     * Преобразует HTML фрагмент в строку, готовую для использования в JSON.
+     * Преобразует HTML фрагмент в строку,
+     * готовую для использования в JSON.
      * Возвращает экранированную строку с кавычками.
      *
      * @param html HTML фрагмент
-     * @return JSON-экранированная строка (например: "Текст с \\n переносом")
+     * @return JSON-экранированная строка
+     *         (например: "Текст с \\n переносом")
      */
     public static String htmlToPlainTextForJson(String html) {
         String text = htmlToPlainText(html);
@@ -116,9 +123,12 @@ public class HtmlToText {
                 TextNode textNode = (TextNode) node;
                 String text = textNode.text();
 
-                // Добавляем пробел перед текстом, если предыдущий узел - элемент и текст не начинается с пробела
-                if (i > 0 && nodes.get(i - 1) instanceof Element && !text.startsWith(" ") && !text.startsWith("\t")) {
-                    if (sb.length() > 0 && !sb.toString().endsWith(" ") && !sb.toString().endsWith("\n")) {
+                // Добавляем пробел перед текстом, если предыдущий узел -
+                // элемент и текст не начинается с пробела
+                if (i > 0 && nodes.get(i - 1) instanceof Element
+                        && !text.startsWith(" ") && !text.startsWith("\t")) {
+                    if (sb.length() > 0 && !sb.toString().endsWith(" ")
+                            && !sb.toString().endsWith("\n")) {
                         sb.append(" ");
                     }
                 }
@@ -145,7 +155,8 @@ public class HtmlToText {
     }
 
     /**
-     * Обработка текстового узла с нормализацией пробелов.
+     * Обработка текстового узла
+     * с нормализацией пробелов.
      */
     private static void processText(String text, StringBuilder sb) {
         if (text.trim().isEmpty()) {
@@ -158,7 +169,8 @@ public class HtmlToText {
 
     /**
      * Добавляет мягкий разрыв строки для <br> тегов.
-     * Добавляет один перенос строки для мягкого переноса.
+     * Добавляет один перенос строки
+     * для мягкого переноса.
      */
     private static void addSoftLineBreak(StringBuilder sb) {
         sb.append("\n");
@@ -177,7 +189,8 @@ public class HtmlToText {
     }
 
     /**
-     * Нормализует множественные пробелы в одной строке.
+     * Нормализует множественные пробелы
+     * в одной строке.
      */
     private static String normalizeSpaces(String text) {
         return text.replaceAll("[ \t\r\n]+", " ");
