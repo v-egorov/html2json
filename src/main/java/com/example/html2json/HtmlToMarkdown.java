@@ -105,10 +105,19 @@ public class HtmlToMarkdown {
      * Рекурсивно собирает Markdown из HTML элементов.
      */
     private static void collectMarkdown(Element element, StringBuilder sb) {
-        for (Node node : element.childNodes()) {
+        java.util.List<Node> nodes = element.childNodes();
+        for (int i = 0; i < nodes.size(); i++) {
+            Node node = nodes.get(i);
             if (node instanceof TextNode) {
                 TextNode textNode = (TextNode) node;
                 String text = textNode.text();
+
+                // Добавляем пробел перед текстом, если предыдущий узел - элемент и текст не начинается с пробела
+                if (i > 0 && nodes.get(i - 1) instanceof Element && !text.startsWith(" ") && !text.startsWith("\t")) {
+                    if (sb.length() > 0 && !sb.toString().endsWith(" ") && !sb.toString().endsWith("\n")) {
+                        sb.append(" ");
+                    }
+                }
 
                 if (!text.trim().isEmpty()) {
                     sb.append(text.trim());
@@ -458,7 +467,7 @@ public class HtmlToMarkdown {
             // For markdown soft breaks, preserve trailing spaces (2 spaces before newline)
             // Check if this line ends with 2 spaces (markdown soft break marker)
             if (line.endsWith("  ") && i < finalLines.length - 1) {
-                finalResult.append(line.replaceAll("  $", "").trim());
+                finalResult.append(line.trim());
                 finalResult.append("  \n");
             } else {
                 finalResult.append(line.trim());

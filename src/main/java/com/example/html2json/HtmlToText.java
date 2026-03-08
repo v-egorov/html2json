@@ -109,10 +109,19 @@ public class HtmlToText {
      * Рекурсивно собирает текст из HTML элементов.
      */
     private static void collectText(Element element, StringBuilder sb) {
-        for (Node node : element.childNodes()) {
+        java.util.List<Node> nodes = element.childNodes();
+        for (int i = 0; i < nodes.size(); i++) {
+            Node node = nodes.get(i);
             if (node instanceof TextNode) {
                 TextNode textNode = (TextNode) node;
                 String text = textNode.text();
+
+                // Добавляем пробел перед текстом, если предыдущий узел - элемент и текст не начинается с пробела
+                if (i > 0 && nodes.get(i - 1) instanceof Element && !text.startsWith(" ") && !text.startsWith("\t")) {
+                    if (sb.length() > 0 && !sb.toString().endsWith(" ") && !sb.toString().endsWith("\n")) {
+                        sb.append(" ");
+                    }
+                }
 
                 if (!text.isEmpty()) {
                     processText(text, sb);
@@ -128,11 +137,6 @@ public class HtmlToText {
                         sb.append("\n");
                     }
                     collectText(childElement, sb);
-                } else if (isInlineBreakElement(tagName)) {
-                    if (sb.length() > 0) {
-                        sb.append("\n");
-                    }
-                    collectText(childElement, sb);
                 } else {
                     collectText(childElement, sb);
                 }
@@ -144,19 +148,11 @@ public class HtmlToText {
      * Обработка текстового узла с нормализацией пробелов.
      */
     private static void processText(String text, StringBuilder sb) {
-        String trimmed = text.trim();
-        
-        if (trimmed.isEmpty()) {
+        if (text.trim().isEmpty()) {
             return;
         }
 
-        boolean needsBreak = sb.length() > 0 && !sb.toString().endsWith("\n") && !sb.toString().endsWith("\n\n");
-
-        if (needsBreak) {
-            sb.append("\n");
-        }
-
-        String normalized = normalizeSpaces(trimmed);
+        String normalized = normalizeSpaces(text);
         sb.append(normalized);
     }
 
@@ -176,16 +172,6 @@ public class HtmlToText {
             case "p", "div", "ul", "ol", "li", "h1", "h2", "h3", "h4", "h5", "h6",
                  "table", "tr", "td", "th", "blockquote", "pre", "hr", "section",
                  "article", "aside", "header", "footer", "nav", "main" -> true;
-            default -> false;
-        };
-    }
-
-    /**
-     * Определяет, является ли элемент inline с переносом строки.
-     */
-    private static boolean isInlineBreakElement(String tagName) {
-        return switch (tagName) {
-            case "li", "dd", "dt" -> true;
             default -> false;
         };
     }
@@ -215,7 +201,7 @@ public class HtmlToText {
                     inEmptyBlock = true;
                 }
             } else {
-                result.append(lines[i]);
+                result.append(lines[i].trim());
                 inEmptyBlock = false;
             }
             
