@@ -117,11 +117,6 @@ public class HtmlToMarkdownTest {
         String html = readFile("test-nested-elements.html");
         String result = HtmlToMarkdown.htmlToMarkdown(html);
         
-        System.out.println("Result: [" + result.replace("\n", "\\n") + "]");
-        System.out.println("Check 1: " + result.contains("[**жирной ссылкой**](https://example.com)"));
-        System.out.println("Check 2: " + result.contains("*[курсивная ссылка](https://test.com)*"));
-        System.out.println("Check 3: " + result.contains("[***сильный курсив в ссылке***](https://link.com)"));
-        
         assertTrue(result.contains("[**жирной ссылкой**](https://example.com)"));
         assertTrue(result.contains("*[курсивная ссылка](https://test.com)*"));
         assertTrue(result.contains("[***сильный курсив в ссылке***](https://link.com)"));
