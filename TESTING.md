@@ -61,12 +61,12 @@
 
 **HTML:**
 ```html
-<p>Это простой абзац текста.</p>
+<p>Это простой абзац с текстом.</p>
 ```
 
 **Ожидаемый вывод (plain):**
 ```
-Это простой абзац текста.
+Это простой абзац с текстом.
 ```
 
 **JSON-экранированный вывод (plain):**
@@ -76,7 +76,7 @@
 
 **Ожидаемый вывод (markdown):**
 ```markdown
-Это простой абзац текста.
+Это простой абзац с текстом.
 ```
 
 **JSON-экранированный вывод (markdown):**
@@ -91,18 +91,18 @@
 
 **HTML:**
 ```html
-<p>Это первый абзац.</p>
-<p>Это второй абзац.</p>
-<p>Это третий абзац.</p>
+<p>Первый абзац текста.</p>
+<p>Второй абзац текста, начинающийся после перерыва.</p>
+<p>Третий абзац завершает пример.</p>
 ```
 
 **Ожидаемый вывод (plain):**
 ```
-Это первый абзац.
+Первый абзац текста.
 
-Это второй абзац.
+Второй абзац текста, начинающийся после перерыва.
 
-Это третий абзац.
+Третий абзац завершает пример.
 ```
 
 **JSON-экранированный вывод (plain):**
@@ -112,11 +112,11 @@
 
 **Ожидаемый вывод (markdown):**
 ```markdown
-Это первый абзац.
+Первый абзац текста.
 
-Это второй абзац.
+Второй абзац текста, начинающийся после перерыва.
 
-Это третий абзац.
+Третий абзац завершает пример.
 ```
 
 **JSON-экранированный вывод (markdown):**
@@ -132,42 +132,42 @@
 **HTML:**
 ```html
 <ul>
-    <li>Элемент 1</li>
-    <li>Элемент 2</li>
-    <li>Элемент 3</li>
+    <li>Первый элемент маркированного списка</li>
+    <li>Второй элемент маркированного списка</li>
+    <li>Третий элемент маркированного списка</li>
 </ul>
 <ol>
-    <li>Первый элемент</li>
-    <li>Второй элемент</li>
-    <li>Третий элемент</li>
+    <li>Первый элемент нумерованного списка</li>
+    <li>Второй элемент нумерованного списка</li>
+    <li>Третий элемент нумерованного списка</li>
 </ol>
 ```
 
 **Ожидаемый вывод (plain):**
 ```
-• Элемент 1
-• Элемент 2
-• Элемент 3
+Первый элемент маркированного списка
+Второй элемент маркированного списка
+Третий элемент маркированного списка
 
-1. Первый элемент
-2. Второй элемент
-3. Третий элемент
+Первый элемент нумерованного списка
+Второй элемент нумерованного списка
+Третий элемент нумерованного списка
 ```
 
 **JSON-экранированный вывод (plain):**
 ```
-"Первый элемент маркированного списка\n\nВторой элемент маркированного списка\n\nТретий элемент маркированного списка\n\nПервый элемент нумерованного списка\n\nВторой элемент нумерованного списка\n\nТретий элемент нумерованного списка\n"
+"Первый элемент маркированного списка\nВторой элемент маркированного списка\nТретий элемент маркированного списка\n\nПервый элемент нумерованного списка\nВторой элемент нумерованного списка\nТретий элемент нумерованного списка\n"
 ```
 
 **Ожидаемый вывод (markdown):**
 ```markdown
-• Элемент 1
-• Элемент 2
-• Элемент 3
+- Первый элемент маркированного списка
+- Второй элемент маркированного списка
+- Третий элемент маркированного списка
 
-1. Первый элемент
-2. Второй элемент
-3. Третий элемент
+1. Первый элемент нумерованного списка
+2. Второй элемент нумерованного списка
+3. Третий элемент нумерованного списка
 ```
 
 **JSON-экранированный вывод (markdown):**
@@ -227,13 +227,15 @@
 
 **HTML:**
 ```html
-<p>Текст с<br>переносом строки внутри<br>Текст в div с<br><br>двумя переносами</p>
+<p>Текст с<br/>переносом строки внутри</p>
+<p>Текст в div с<br/><br/>двумя переносами</p>
 ```
 
 **Ожидаемый вывод (plain):**
 ```
 Текст с
 переносом строки внутри
+
 Текст в div с
 
 двумя переносами
@@ -241,13 +243,14 @@
 
 **JSON-экранированный вывод (plain):**
 ```
-"Текст с\nпереносом строки внутри\nТекст в div с\n\nдвумя переносами"
+"Текст с\nпереносом строки внутри\n\nТекст в div с\n\nдвумя переносами\n"
 ```
 
 **Ожидаемый вывод (markdown):**
 ```markdown
 Текст с  
-переносом строки внутри  
+переносом строки внутри
+
 Текст в div с  
   двумя переносами
 ```
@@ -260,17 +263,21 @@
 ---
 
 ### 6. test-whitespace.html
-**Описание:** Сохранение пробелов и форматирования в `<pre>`
+**Описание:** Сохранение пробелов и форматирования
 
 **HTML:**
 ```html
-<pre>
-Текст с множественными пробелами внутри.
-
-Текст с множеством переносов строк и пробелов
-
-Текст<табуляция>внутри
-</pre>
+<p>   Текст   с   множественными   пробелами   внутри.   </p>
+<p>
+    
+    
+    Текст с множеством 
+    
+    переносов строк
+    
+    и пробелов
+</p>
+<p>Текст&lt;табуляция&gt;внутри</p>
 ```
 
 **Ожидаемый вывод (plain):**
@@ -284,18 +291,16 @@
 
 **JSON-экранированный вывод (plain):**
 ```
-"Текст с множественными пробелами внутри.\n\nТекст с множеством переносов строк и пробелов\n\nТекст<табуляция>внутри"
+"Текст с множественными пробелами внутри.\n\nТекст с множеством переносов строк и пробелов\n\nТекст<табуляция>внутри\n"
 ```
 
 **Ожидаемый вывод (markdown):**
 ```markdown
-```
 Текст с множественными пробелами внутри.
 
 Текст с множеством переносов строк и пробелов
 
 Текст<табуляция>внутри
-```
 ```
 
 **JSON-экранированный вывод (markdown):**
@@ -310,10 +315,9 @@
 
 **HTML:**
 ```html
-<html>
-<head><title>Пустая страница</title></head>
-<body></body>
-</html>
+<div></div>
+<p></p>
+<br>
 ```
 
 **Ожидаемый вывод (plain):**
@@ -388,9 +392,9 @@ Emoji: 🎉 🚀 💻
 
 **HTML:**
 ```html
-<p>Текст с <b><a href="https://example.com">жирной ссылкой</a></b> внутри.</p>
+<p>Текст с <a href="https://example.com"><b>жирной ссылкой</b></a> внутри.</p>
 <p><i><a href="https://test.com">курсивная ссылка</a></i> в ином порядке.</p>
-<p><b><i><a href="https://link.com">сильный курсив в ссылке</a></i></b></p>
+<p><a href="https://link.com"><strong><em>сильный курсив в ссылке</em></strong></a></p>
 ```
 
 **Ожидаемый вывод (plain):**
@@ -428,16 +432,19 @@ Emoji: 🎉 🚀 💻
 
 **HTML:**
 ```html
-<h1>Заголовок статьи</h1>
-<p>Это <b>жирный</b> и <i>курсивный</i> текст в статье.</p>
-<ul>
-    <li>Первый элемент</li>
-    <li>Второй элемент с <a href="https://example.com">ссылкой</a></li>
-</ul>
-<blockquote>
-    <p>Цитата из статьи.</p>
-</blockquote>
-<p>Заключительный **абзац**.</p>
+<article>
+    <h1>Заголовок статьи</h1>
+    <p>Это <b>жирный</b> и <i>курсивный</i> текст в статье.</p>
+    <p>Список элементов:</p>
+    <ul>
+        <li>Первый элемент</li>
+        <li>Второй элемент с <a href="https://example.com">ссылкой</a></li>
+    </ul>
+    <blockquote>
+        <p>Цитата из статьи.</p>
+    </blockquote>
+    <p>Заключительный <strong>абзац</strong>.</p>
+</article>
 ```
 
 **Ожидаемый вывод (plain):**
@@ -468,6 +475,8 @@ Emoji: 🎉 🚀 💻
 
 Это **жирный** и *курсивный* текст в статье.
 
+Список элементов:
+
 - Первый элемент
 - Второй элемент с [ссылкой](https://example.com)
 
@@ -478,7 +487,7 @@ Emoji: 🎉 🚀 💻
 
 **JSON-экранированный вывод (markdown):**
 ```
-"# Заголовок статьи\n\nЭто **жирный** и *курсивный* текст в статье.\n\n- Первый элемент\n- Второй элемент с [ссылкой](https://example.com)\n\n> Цитата из статьи.\n\nЗаключительный **абзац**."
+"# Заголовок статьи\n\nЭто **жирный** и *курсивный* текст в статье.\n\nСписок элементов:\n- Первый элемент\n- Второй элемент с [ссылкой](https://example.com)\n\n> Цитата из статьи.\n\nЗаключительный **абзац**."
 ```
 
 ---
@@ -498,7 +507,7 @@ Test long text scenario. Lorem ipsum dolor sit amet, consectetur adipiscing elit
 
 **JSON-экранированный вывод (plain):**
 ```
-"Test long text scenario. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+"Test long text scenario. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.\n"
 ```
 
 **Ожидаемый вывод (markdown):**
@@ -519,14 +528,12 @@ Test long text scenario. Lorem ipsum dolor sit amet, consectetur adipiscing elit
 **HTML:**
 ```html
 <div>
+    <p>Абзац 1</p>
+    <br>
+    <p>Абзац 2</p>
     <div>
-        <p>Абзац 1</p>
-    </div>
-    <div>
-        <p>Абзац 2</p>
-        <div>
-            <p>Вложенный абзац</p>
-        </div>
+        <p>Вложенный абзац</p>
+        <br/>
     </div>
 </div>
 ```
@@ -566,8 +573,8 @@ Test long text scenario. Lorem ipsum dolor sit amet, consectetur adipiscing elit
 
 **HTML:**
 ```html
-<p>Текст с HTML сущностями: &lt; &gt; &amp; &quot; &#39; © ® — –</p>
-<p>Текст со спецсимволами: © — …</p>
+<p>Текст с HTML сущностями: &lt; &gt; &amp; &quot; &apos; &copy; &reg; &mdash; &ndash;</p>
+<p>Текст со спецсимволами: &#169; &#8212; &#8230;</p>
 ```
 
 **Ожидаемый вывод (plain):**
@@ -579,7 +586,7 @@ Test long text scenario. Lorem ipsum dolor sit amet, consectetur adipiscing elit
 
 **JSON-экранированный вывод (plain):**
 ```
-"Текст с HTML сущностями: < > & \" ' © ® — –\n\nТекст со спецсимволами: © — …"
+"Текст с HTML сущностями: < > & \" ' © ® — –\n\nТекст со спецсимволами: © — …\n"
 ```
 
 **Ожидаемый вывод (markdown):**
@@ -752,37 +759,37 @@ Test long text scenario. Lorem ipsum dolor sit amet, consectetur adipiscing elit
 
 **HTML:**
 ```html
-<p><b><a href="https://example.com">пример сайта</a></b></p>
-<p><i><a href="https://test.com">ссылка в тексте</a></i> и еще текст.</p>
+<p>Ссылка: <a href="https://example.com">пример сайта</a></p>
+<p>Встроенная <a href="https://google.com">ссылка в тексте</a> и еще текст.</p>
 <p><a href="https://test.com">Только ссылка</a></p>
 ```
 
 **Ожидаемый вывод (plain):**
 ```
-пример сайта
+Ссылка: пример сайта
 
-ссылка в тексте и еще текст.
+Встроенная ссылка в тексте и еще текст.
 
 Только ссылка
 ```
 
 **JSON-экранированный вывод (plain):**
 ```
-"пример сайта\n\nссылка в тексте и еще текст.\n\nТолько ссылка\n"
+"Ссылка: пример сайта\n\nВстроенная ссылка в тексте и еще текст.\n\nТолько ссылка\n"
 ```
 
 **Ожидаемый вывод (markdown):**
 ```markdown
-[пример сайта](https://example.com)
+Ссылка: [пример сайта](https://example.com)
 
-[ссылка в тексте](https://test.com) и еще текст.
+Встроенная [ссылка в тексте](https://google.com) и еще текст.
 
 [Только ссылка](https://test.com)
 ```
 
 **JSON-экранированный вывод (markdown):**
 ```
-"[пример сайта](https://example.com)\n\n[ссылка в тексте](https://test.com) и еще текст.\n\n[Только ссылка](https://test.com)"
+"Ссылка: [пример сайта](https://example.com)\n\nВстроенная [ссылка в тексте](https://google.com) и еще текст.\n\n[Только ссылка](https://test.com)"
 ```
 
 ---
@@ -963,7 +970,7 @@ CLI утилита возвращает JSON-экранированную стр
 
 **Команда:**
 ```bash
-java -cp target/html2json-1.0-SNAPSHOT.jar com.example.html2json.Runner src/test/resources/test-simple-paragraph.html
+make run HTML_FILE=src/test/resources/test-simple-paragraph.html
 ```
 
 **Ожидаемый вывод (e2e-tests/plain/test-simple-paragraph.exp-output):**
@@ -975,7 +982,7 @@ java -cp target/html2json-1.0-SNAPSHOT.jar com.example.html2json.Runner src/test
 
 **Команда:**
 ```bash
-java -cp target/html2json-1.0-SNAPSHOT.jar com.example.html2json.Runner --markdown src/test/resources/test-simple-paragraph.html
+make run HTML_FILE=src/test/resources/test-simple-paragraph.html RUN_ARGS="-m"
 ```
 
 **Ожидаемый вывод (e2e-tests/markdown/test-simple-paragraph.exp-output.md):**
