@@ -26,7 +26,11 @@ e2e:
 
 # Запуск проекта
 run:
-	mvn exec:java -Dexec.mainClass="com.example.html2json.Runner" -Dexec.args="$(HTML_FILE)"
+	@echo "=== Входной файл: $(HTML_FILE) ==="
+	@cat $(HTML_FILE)
+	@echo ""
+	@echo "=== Преобразованный контент ==="
+	@java -cp target/html2json-1.0.0.jar com.example.html2json.Runner $(RUN_ARGS) $(HTML_FILE)
 
 # Проверка формата кода
 lint:
@@ -49,6 +53,10 @@ help:
 	@echo "  make build    - Собрать проект"
 	@echo "  make test     - Запустить тесты (JUnit)"
 	@echo "  make e2e      - Запустить E2E тесты CLI"
-	@echo "  make run HTML_FILE=<file> - Запустить проект с HTML файлом"
+	@echo "  make run HTML_FILE=<file> RUN_ARGS='' - Запустить проект с HTML файлом"
 	@echo "  make check    - Полная проверка (сборка + тесты + форматирование)"
 	@echo "  make help     - Показать эту справку"
+	@echo ""
+	@echo "Примеры:"
+	@echo "  make run HTML_FILE=src/test/resources/test-formatting.html"
+	@echo "  make run HTML_FILE=src/test/resources/test-formatting.html RUN_ARGS='-m'"
