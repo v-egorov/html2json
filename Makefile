@@ -38,7 +38,7 @@ run:
 
 # Проверка формата кода
 lint:
-	mvn checkstyle:check
+	mvn checkstyle:check -Dcheckstyle.config.location=checkstyle.xml
 
 # Полная проверка (сборка + тесты + форматирование)
 check: all lint
