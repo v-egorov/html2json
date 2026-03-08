@@ -29,7 +29,11 @@ run:
 	@echo "=== Входной файл: $(HTML_FILE) ==="
 	@cat $(HTML_FILE)
 	@echo ""
-	@echo "=== Преобразованный контент ==="
+	@if [ "$(RUN_ARGS)" = "-m" ] || [ "$(RUN_ARGS)" = "--markdown" ]; then \
+		echo "=== Преобразованный контент (Markdown) ==="; \
+	else \
+		echo "=== Преобразованный контент (Plain Text) ==="; \
+	fi
 	@java -cp target/html2json-1.0.0.jar com.example.html2json.Runner $(RUN_ARGS) $(HTML_FILE)
 
 # Проверка формата кода
