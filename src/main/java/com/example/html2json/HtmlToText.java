@@ -6,8 +6,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -53,10 +51,10 @@ public class HtmlToText {
         Document doc = Jsoup.parse(wrappedHtml);
         Element element = doc.body().firstElementChild();
 
-        List<String> lines = new ArrayList<>();
-        collectText(element, lines);
+        StringBuilder sb = new StringBuilder();
+        collectText(element, sb);
 
-        return normalizeOutput(lines);
+        return normalizeOutput(sb.toString());
     }
 
     /**
@@ -110,31 +108,33 @@ public class HtmlToText {
     /**
      * Рекурсивно собирает текст из HTML элементов.
      */
-    private static void collectText(Element element, List<String> lines) {
+    private static void collectText(Element element, StringBuilder sb) {
         for (Node node : element.childNodes()) {
             if (node instanceof TextNode) {
                 TextNode textNode = (TextNode) node;
                 String text = textNode.text();
 
                 if (!text.isEmpty()) {
-                    processText(text, lines);
+                    processText(text, sb);
                 }
             } else if (node instanceof Element) {
                 Element childElement = (Element) node;
                 String tagName = childElement.tagName().toLowerCase();
 
                 if ("br".equals(tagName)) {
-                    addLineBreak(lines);
+                    addSoftLineBreak(sb);
                 } else if (isBlockElement(tagName)) {
-                    if (!lines.isEmpty()) {
-                        lines.add("");
+                    if (sb.length() > 0) {
+                        sb.append("\n");
                     }
-                    collectText(childElement, lines);
+                    collectText(childElement, sb);
                 } else if (isInlineBreakElement(tagName)) {
-                    addLineBreak(lines);
-                    collectText(childElement, lines);
+                    if (sb.length() > 0) {
+                        sb.append("\n");
+                    }
+                    collectText(childElement, sb);
                 } else {
-                    collectText(childElement, lines);
+                    collectText(childElement, sb);
                 }
             }
         }
@@ -143,30 +143,29 @@ public class HtmlToText {
     /**
      * Обработка текстового узла с нормализацией пробелов.
      */
-    private static void processText(String text, List<String> lines) {
+    private static void processText(String text, StringBuilder sb) {
         String trimmed = text.trim();
         
-        if (trimmed.isEmpty() && lines.isEmpty()) {
+        if (trimmed.isEmpty()) {
             return;
         }
 
-        boolean needsBreak = !lines.isEmpty() && !lines.get(lines.size() - 1).isEmpty();
+        boolean needsBreak = sb.length() > 0 && !sb.toString().endsWith("\n") && !sb.toString().endsWith("\n\n");
 
         if (needsBreak) {
-            lines.add("");
+            sb.append("\n");
         }
 
         String normalized = normalizeSpaces(trimmed);
-        if (!normalized.isEmpty()) {
-            lines.add(normalized);
-        }
+        sb.append(normalized);
     }
 
     /**
-     * Добавляет разрыв строки в вывод.
+     * Добавляет мягкий разрыв строки для <br> тегов.
+     * Добавляет один перенос строки для мягкого переноса.
      */
-    private static void addLineBreak(List<String> lines) {
-        lines.add("");
+    private static void addSoftLineBreak(StringBuilder sb) {
+        sb.append("\n");
     }
 
     /**
@@ -182,11 +181,11 @@ public class HtmlToText {
     }
 
     /**
-     * Определяет, является ли элемент_inline_с_переносом_строки.
+     * Определяет, является ли элемент inline с переносом строки.
      */
     private static boolean isInlineBreakElement(String tagName) {
         return switch (tagName) {
-            case "br", "li", "dd", "dt" -> true;
+            case "li", "dd", "dt" -> true;
             default -> false;
         };
     }
@@ -201,24 +200,30 @@ public class HtmlToText {
     /**
      * Нормализует финальный вывод текста.
      */
-    private static String normalizeOutput(List<String> lines) {
-        List<String> result = new ArrayList<>();
+    private static String normalizeOutput(String text) {
+        // Убираем дублирующие пустые строки
+        String[] lines = text.split("\n");
+        StringBuilder result = new StringBuilder();
         boolean inEmptyBlock = false;
 
-        for (String line : lines) {
-            boolean isEmpty = line.trim().isEmpty();
+        for (int i = 0; i < lines.length; i++) {
+            boolean isEmpty = lines[i].trim().isEmpty();
 
             if (isEmpty) {
-                if (!inEmptyBlock && !result.isEmpty()) {
-                    result.add(line);
+                if (!inEmptyBlock && result.length() > 0) {
+                    result.append("\n");
                     inEmptyBlock = true;
                 }
             } else {
-                result.add(line);
+                result.append(lines[i]);
                 inEmptyBlock = false;
+            }
+            
+            if (i < lines.length - 1 && !isEmpty) {
+                result.append("\n");
             }
         }
 
-        return String.join("\n", result);
+        return result.toString();
     }
 }

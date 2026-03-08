@@ -118,7 +118,7 @@ public class HtmlToMarkdown {
                 String tagName = childElement.tagName().toLowerCase();
 
                 if ("br".equals(tagName)) {
-                    sb.append("\n");
+                    sb.append("  \n");
                 } else if ("p".equals(tagName)) {
                     collectParagraph(childElement, sb);
                 } else if (tagName.startsWith("h") && isHeading(tagName)) {
@@ -450,13 +450,21 @@ public class HtmlToMarkdown {
         // Убираем пробелы перед знаками препинания
         normalized = normalized.replaceAll(" ([.,!?;:])", "$1");
         
-        // Убираем лишние пробелы в начале/конце строк
-        String[] finalLines = normalized.split("\n");
+        // Убираем лишние пробелы в начале/конце строк, но сохраняем trailing spaces для markdown soft breaks
+        String[] finalLines = normalized.split("\n", -1);
         StringBuilder finalResult = new StringBuilder();
         for (int i = 0; i < finalLines.length; i++) {
-            finalResult.append(finalLines[i].trim());
-            if (i < finalLines.length - 1) {
-                finalResult.append("\n");
+            String line = finalLines[i];
+            // For markdown soft breaks, preserve trailing spaces (2 spaces before newline)
+            // Check if this line ends with 2 spaces (markdown soft break marker)
+            if (line.endsWith("  ") && i < finalLines.length - 1) {
+                finalResult.append(line.replaceAll("  $", "").trim());
+                finalResult.append("  \n");
+            } else {
+                finalResult.append(line.trim());
+                if (i < finalLines.length - 1) {
+                    finalResult.append("\n");
+                }
             }
         }
 
