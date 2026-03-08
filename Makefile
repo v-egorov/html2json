@@ -34,7 +34,7 @@ run:
 	else \
 		echo "=== Преобразованный контент (Plain Text) ==="; \
 	fi
-	@java -cp target/html2json-1.0.0.jar com.example.html2json.Runner $(RUN_ARGS) $(HTML_FILE)
+	@mvn exec:java -Dexec.mainClass="com.example.html2json.Runner" -Dexec.args="$(RUN_ARGS) $(HTML_FILE)" -q
 
 # Проверка формата кода
 lint:
