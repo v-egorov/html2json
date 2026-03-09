@@ -101,6 +101,16 @@ String text3 = HtmlToText.htmlToPlainText(html3);
 String html4 = "<p>1 &amp; 2 &lt; 10</p>";
 String text4 = HtmlToText.htmlToPlainText(html4);
 // Результат: "1 & 2 < 10"
+
+// Списки
+String html5 = "<ul><li>Первый</li><li>Второй</li></ul><ol><li>Один</li><li>Два</li></ol>";
+String text5 = HtmlToText.htmlToPlainText(html5);
+// Результат:
+// • Первый
+// • Второй
+//
+// 1. Один
+// 2. Два
 ```
 
 ### Метод `htmlToPlainTextForJson`
@@ -536,7 +546,9 @@ collectText(element, lines)
 |-----|----------|
 | `p` | Параграф |
 | `div` | Блочный контейнер |
-| `ul`, `ol`, `li` | Списки |
+| `ul` | Маркированный список (с буллетами `•`) |
+| `ol` | Нумерованный список (с номерами `1. 2. 3.`) |
+| `li` | Элемент списка |
 | `h1`–`h6` | Заголовки |
 | `table`, `tr`, `td`, `th` | Таблицы |
 | `blockquote` | Цитата |
@@ -711,7 +723,7 @@ Jsoup автоматически конвертирует:
 | `testSimpleParagraph` | `<p>Один абзац</p>` | Возвращает текст без изменений |
 | `testMultipleParagraphs` | `<p>1</p><p>2</p><p>3</p>` | Сохраняет 3 абзаца с переходами |
 | `testHtmlEntities` | `&lt;tag&gt; &copy; 2024` | Конвертирует сущности |
-| `testLists` | `<ul><li>1</li><li>2</li></ul>` | Извлекает элементы списков |
+| `testLists` | `<ul><li>1</li><li>2</li></ul>` | Извлекает элементы списков с буллетами и номерами |
 | `testFormatting` | `<b>жир</b> <i>курс</i>` | Извлекает текст без тегов |
 | `testLineBreaks` | `<p>Текст<br/>с переносом</p>` | Сохраняет разрывы строк |
 | `testWhitespaceNormalization` | `<p>   Текст   с   пробелами   </p>` | Нормализует пробелы |
@@ -758,7 +770,7 @@ Jsoup автоматически конвертирует:
 | `test-simple-paragraph.html` | Базовый параграф | HtmlToText, HtmlToMarkdown |
 | `test-multiple-paragraphs.html` | Несколько абзацев | HtmlToText, HtmlToMarkdown |
 | `test-html-entities.html` | HTML сущности | HtmlToText |
-| `test-lists.html` | Маркированные и нумерованные списки | HtmlToText, HtmlToMarkdown |
+| `test-lists.html` | Маркированные и нумерованные списки с буллетами и номерами | HtmlToText, HtmlToMarkdown |
 | `test-formatting.html` | Форматирование (`<b>`, `<i>`, `<strong>`, `<em>`) | HtmlToText, HtmlToMarkdown |
 | `test-line-breaks.html` | Переносы строк (`<br>`, `<br/>`) | HtmlToText, HtmlToMarkdown |
 | `test-whitespace.html` | Множественные пробелы | HtmlToText |
@@ -916,6 +928,12 @@ private boolean isBlockElement(String tagName) {
 | `<pre>` с отступами | Обрабатывается как блок, отступы нормализуются |
 | Вложенные `<p>` | Не валидный HTML, но обрабатывается |
 | Синтаксические ошибки HTML | Jsoup пытается исправить, результат зависит от корректора |
+
+### Поведение списков
+
+**Маркированные списки (`<ul>`)**: каждый элемент начинается с буллета `•`
+
+**Нумерованные списки (`<ol>`)**: элементы нумеруются `1. 2. 3.`
 
 ## 10. Примеры интеграции
 
