@@ -142,6 +142,12 @@ public class HtmlToText {
 
                 if ("br".equals(tagName)) {
                     addSoftLineBreak(sb);
+                } else if ("ul".equals(tagName)) {
+                    if (sb.length() > 0) sb.append("\n");
+                    collectUnorderedList(childElement, sb);
+                } else if ("ol".equals(tagName)) {
+                    if (sb.length() > 0) sb.append("\n");
+                    collectOrderedList(childElement, sb);
                 } else if (isBlockElement(tagName)) {
                     if (sb.length() > 0) {
                         sb.append("\n");
@@ -181,11 +187,37 @@ public class HtmlToText {
      */
     private static boolean isBlockElement(String tagName) {
         return switch (tagName) {
-            case "p", "div", "ul", "ol", "li", "h1", "h2", "h3", "h4", "h5", "h6",
+            case "p", "div", "li", "h1", "h2", "h3", "h4", "h5", "h6",
                  "table", "tr", "td", "th", "blockquote", "pre", "hr", "section",
                  "article", "aside", "header", "footer", "nav", "main" -> true;
             default -> false;
         };
+    }
+
+    /**
+     * Обработка маркированного списка.
+     */
+    private static void collectUnorderedList(Element element, StringBuilder sb) {
+        java.util.List<Element> items = element.getElementsByTag("li");
+        for (int i = 0; i < items.size(); i++) {
+            if (i > 0) sb.append("\n");
+            Element li = items.get(i);
+            sb.append("• ");
+            collectText(li, sb);
+        }
+    }
+
+    /**
+     * Обработка нумерованного списка.
+     */
+    private static void collectOrderedList(Element element, StringBuilder sb) {
+        java.util.List<Element> items = element.getElementsByTag("li");
+        for (int i = 0; i < items.size(); i++) {
+            if (i > 0) sb.append("\n");
+            Element li = items.get(i);
+            sb.append((i + 1)).append(". ");
+            collectText(li, sb);
+        }
     }
 
     /**
