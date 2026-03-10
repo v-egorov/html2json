@@ -137,22 +137,35 @@ public class HtmlToText {
                 boolean isOutsideP = !isInsideP(textNode);
                 boolean isInsideSpecialElement = isInsideSpecialElement(textNode);
                 
-                if (isOutsideP && !isRoot && !isInsideSpecialElement && sb.length() > 0 && !text.trim().isEmpty()) {
-                    sb.append("\n\n");
+                // Нормализуем текст СНАЧАЛА
+                String normalized = normalizeSpaces(text);
+                
+                // Добавляем \n\n перед нормализованным текстом
+                boolean prevWasBr = i > 0 && nodes.get(i - 1) instanceof Element && "br".equals(((Element) nodes.get(i - 1)).tagName());
+                
+                // Проверяем, находится ли текст внутри корневой <div> wrapper
+                boolean isRootText = isRoot && textNode.parent() instanceof Element && 
+                                     ((Element) textNode.parent()).tagName().equals("div");
+                
+                if (isOutsideP && !isInsideSpecialElement && sb.length() > 0 && !normalized.trim().isEmpty() && !prevWasBr) {
+                    // Для текста в корне добавляем \n\n только если это не первый узел
+                    if (!isRootText || i > 0) {
+                        sb.append("\n\n");
+                    }
                 }
 
-                // Добавляем пробел перед текстом, если предыдущий узел -
-                // элемент и текст не начинается с пробела
+                // Добавляем пробел (НО НЕ если только что добавили \n\n)
                 if (i > 0 && nodes.get(i - 1) instanceof Element
-                        && !text.startsWith(" ") && !text.startsWith("\t")) {
+                        && !normalized.startsWith(" ") && !normalized.startsWith("\t")) {
                     if (sb.length() > 0 && !sb.toString().endsWith(" ")
                             && !sb.toString().endsWith("\n")) {
                         sb.append(" ");
                     }
                 }
 
-                if (!text.isEmpty()) {
-                    processText(text, sb);
+                // Добавляем нормализованный текст
+                if (!normalized.isEmpty()) {
+                    sb.append(normalized);
                 }
             } else if (node instanceof Element) {
                 Element childElement = (Element) node;
@@ -219,9 +232,7 @@ public class HtmlToText {
         if (text.trim().isEmpty()) {
             return;
         }
-
-        String normalized = normalizeSpaces(text);
-        sb.append(normalized);
+        sb.append(text);
     }
 
     /**
@@ -306,6 +317,6 @@ public class HtmlToText {
             }
         }
 
-        return result.toString();
+        return result.toString().trim();
     }
 }
