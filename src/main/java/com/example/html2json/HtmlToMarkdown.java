@@ -43,12 +43,13 @@ public class HtmlToMarkdown {
             return "";
         }
 
-        String wrappedHtml = "<div>" + html + "</div>";
+        String processedHtml = HtmlPreprocessor.preprocess(html);
+        String wrappedHtml = "<div>" + processedHtml + "</div>";
         Document doc = Jsoup.parse(wrappedHtml);
         Element element = doc.body().firstElementChild();
 
         StringBuilder sb = new StringBuilder();
-        collectMarkdown(element, sb);
+        collectMarkdown(element, sb, true);
 
         return normalizeOutput(sb.toString());
     }
@@ -105,12 +106,29 @@ public class HtmlToMarkdown {
      * Рекурсивно собирает Markdown из HTML элементов.
      */
     private static void collectMarkdown(Element element, StringBuilder sb) {
+        collectMarkdown(element, sb, false);
+    }
+
+    /**
+     * Рекурсивно собирает Markdown из HTML элементов.
+     * @param element Элемент для обработки
+     * @param sb StringBuilder для накопления текста
+     * @param isRoot Является ли текущий элемент корнем (div wrapper)
+     */
+    private static void collectMarkdown(Element element, StringBuilder sb, boolean isRoot) {
         java.util.List<Node> nodes = element.childNodes();
         for (int i = 0; i < nodes.size(); i++) {
             Node node = nodes.get(i);
             if (node instanceof TextNode) {
                 TextNode textNode = (TextNode) node;
                 String text = textNode.text();
+
+                boolean isOutsideP = !isInsideP(textNode);
+                boolean isInsideSpecialElement = isInsideSpecialElement(textNode);
+                
+                if (isOutsideP && !isRoot && !isInsideSpecialElement && sb.length() > 0 && !text.trim().isEmpty()) {
+                    sb.append("\n\n");
+                }
 
                 // Добавляем пробел перед текстом, если предыдущий узел - элемент и текст не начинается с пробела
                 if (i > 0 && nodes.get(i - 1) instanceof Element && !text.startsWith(" ") && !text.startsWith("\t")) {
@@ -153,7 +171,7 @@ public class HtmlToMarkdown {
                     sb.append("---\n");
                 } else if ("b".equals(tagName) || "strong".equals(tagName)) {
                     StringBuilder innerText = new StringBuilder();
-                    collectMarkdown(childElement, innerText);
+                    collectMarkdown(childElement, innerText, false);
                     if (!innerText.toString().trim().isEmpty()) {
                         String text = innerText.toString();
                         if (sb.length() > 0 && !Character.isWhitespace(sb.charAt(sb.length() - 1))) {
@@ -175,7 +193,7 @@ public class HtmlToMarkdown {
                     }
                 } else if ("i".equals(tagName) || "em".equals(tagName)) {
                     StringBuilder innerText = new StringBuilder();
-                    collectMarkdown(childElement, innerText);
+                    collectMarkdown(childElement, innerText, false);
                     if (!innerText.toString().trim().isEmpty()) {
                         String text = innerText.toString();
                         if (sb.length() > 0 && !Character.isWhitespace(sb.charAt(sb.length() - 1))) {
@@ -225,17 +243,17 @@ public class HtmlToMarkdown {
                         "header".equals(tagName) || "footer".equals(tagName) ||
                         "nav".equals(tagName) || "main".equals(tagName)) {
                     // Игнорируем блочные контейнеры, но извлекаем текст
-                    collectMarkdown(childElement, sb);
+                    collectMarkdown(childElement, sb, false);
                 } else if ("table".equals(tagName) || "tr".equals(tagName) ||
                         "td".equals(tagName) || "th".equals(tagName)) {
                     // Игнорируем таблицы, но извлекаем текст
-                    collectMarkdown(childElement, sb);
+                    collectMarkdown(childElement, sb, false);
                 } else if ("code".equals(tagName) || "pre".equals(tagName)) {
                     // Игнорируем код, но извлекаем текст
-                    collectMarkdown(childElement, sb);
+                    collectMarkdown(childElement, sb, false);
                 } else {
                     // Остальные элементы - рекурсивно извлекаем текст
-                    collectMarkdown(childElement, sb);
+                    collectMarkdown(childElement, sb, false);
                 }
             }
         }
@@ -429,6 +447,39 @@ public class HtmlToMarkdown {
         if (!current.isEmpty() && !current.endsWith("\n\n")) {
             sb.append("\n");
         }
+    }
+
+    /**
+     * Проверяет, находится ли текстовый узел внутри <p> тега.
+     */
+    private static boolean isInsideP(TextNode textNode) {
+        Node parent = textNode.parent();
+        while (parent != null && !(parent instanceof Document)) {
+            if (parent instanceof Element && "p".equals(((Element) parent).tagName())) {
+                return true;
+            }
+            parent = parent.parent();
+        }
+        return false;
+    }
+
+    /**
+     * Проверяет, находится ли текстовый узел внутри специальных элементов,
+     * где не нужно добавлять \n\n (li, td, th, tr, pre, code).
+     */
+    private static boolean isInsideSpecialElement(TextNode textNode) {
+        Node parent = textNode.parent();
+        while (parent != null && !(parent instanceof Document)) {
+            if (parent instanceof Element) {
+                String tagName = ((Element) parent).tagName();
+                if ("li".equals(tagName) || "td".equals(tagName) || "th".equals(tagName) || 
+                    "tr".equals(tagName) || "pre".equals(tagName) || "code".equals(tagName)) {
+                    return true;
+                }
+            }
+            parent = parent.parent();
+        }
+        return false;
     }
 
     /**

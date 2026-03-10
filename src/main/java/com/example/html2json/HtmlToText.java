@@ -52,12 +52,13 @@ public class HtmlToText {
             return "";
         }
 
-        String wrappedHtml = "<div>" + html + "</div>";
+        String processedHtml = HtmlPreprocessor.preprocess(html);
+        String wrappedHtml = "<div>" + processedHtml + "</div>";
         Document doc = Jsoup.parse(wrappedHtml);
         Element element = doc.body().firstElementChild();
 
         StringBuilder sb = new StringBuilder();
-        collectText(element, sb);
+        collectText(element, sb, true);
 
         return normalizeOutput(sb.toString());
     }
@@ -116,12 +117,29 @@ public class HtmlToText {
      * Рекурсивно собирает текст из HTML элементов.
      */
     private static void collectText(Element element, StringBuilder sb) {
+        collectText(element, sb, false);
+    }
+
+    /**
+     * Рекурсивно собирает текст из HTML элементов.
+     * @param element Элемент для обработки
+     * @param sb StringBuilder для накопления текста
+     * @param isRoot Является ли текущий элемент корнем (div wrapper)
+     */
+    private static void collectText(Element element, StringBuilder sb, boolean isRoot) {
         java.util.List<Node> nodes = element.childNodes();
         for (int i = 0; i < nodes.size(); i++) {
             Node node = nodes.get(i);
             if (node instanceof TextNode) {
                 TextNode textNode = (TextNode) node;
                 String text = textNode.text();
+
+                boolean isOutsideP = !isInsideP(textNode);
+                boolean isInsideSpecialElement = isInsideSpecialElement(textNode);
+                
+                if (isOutsideP && !isRoot && !isInsideSpecialElement && sb.length() > 0 && !text.trim().isEmpty()) {
+                    sb.append("\n\n");
+                }
 
                 // Добавляем пробел перед текстом, если предыдущий узел -
                 // элемент и текст не начинается с пробела
@@ -152,12 +170,45 @@ public class HtmlToText {
                     if (sb.length() > 0) {
                         sb.append("\n");
                     }
-                    collectText(childElement, sb);
+                    collectText(childElement, sb, false);
                 } else {
-                    collectText(childElement, sb);
+                    collectText(childElement, sb, false);
                 }
             }
         }
+    }
+
+    /**
+     * Проверяет, находится ли текстовый узел внутри <p> тега.
+     */
+    private static boolean isInsideP(TextNode textNode) {
+        Node parent = textNode.parent();
+        while (parent != null && !(parent instanceof Document)) {
+            if (parent instanceof Element && "p".equals(((Element) parent).tagName())) {
+                return true;
+            }
+            parent = parent.parent();
+        }
+        return false;
+    }
+
+    /**
+     * Проверяет, находится ли текстовый узел внутри специальных элементов,
+     * где не нужно добавлять \n\n (li, td, th, tr, pre, code).
+     */
+    private static boolean isInsideSpecialElement(TextNode textNode) {
+        Node parent = textNode.parent();
+        while (parent != null && !(parent instanceof Document)) {
+            if (parent instanceof Element) {
+                String tagName = ((Element) parent).tagName();
+                if ("li".equals(tagName) || "td".equals(tagName) || "th".equals(tagName) || 
+                    "tr".equals(tagName) || "pre".equals(tagName) || "code".equals(tagName)) {
+                    return true;
+                }
+            }
+            parent = parent.parent();
+        }
+        return false;
     }
 
     /**
