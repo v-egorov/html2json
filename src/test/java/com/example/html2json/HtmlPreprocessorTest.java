@@ -129,6 +129,53 @@ public class HtmlPreprocessorTest {
     }
 
     @Test
+    public void testCleanPTagsSimple() {
+        String input = "<p class=\"FFNormal\">Текст</p>";
+        String expected = "<p>Текст</p>";
+        assertEquals(expected, HtmlPreprocessor.cleanPTags(input));
+    }
+
+    @Test
+    public void testCleanPTagsStyle() {
+        String input = "<p style=\"\">Текст</p>";
+        String expected = "<p>Текст</p>";
+        assertEquals(expected, HtmlPreprocessor.cleanPTags(input));
+    }
+
+    @Test
+    public void testCleanPTagsBoth() {
+        String input = "<p class=\"A\" style=\"\">Текст</p>";
+        String expected = "<p>Текст</p>";
+        assertEquals(expected, HtmlPreprocessor.cleanPTags(input));
+    }
+
+    @Test
+    public void testCleanPTagsNoAttrs() {
+        String input = "<p>Текст</p>";
+        String expected = "<p>Текст</p>";
+        assertEquals(expected, HtmlPreprocessor.cleanPTags(input));
+    }
+
+    @Test
+    public void testCleanPTagsMixed() {
+        String input = "<p class=\"A\">1</p><p>2</p><p style=\"\">3</p>";
+        String expected = "<p>1</p><p>2</p><p>3</p>";
+        assertEquals(expected, HtmlPreprocessor.cleanPTags(input));
+    }
+
+    @Test
+    public void testCleanPTagsEmpty() {
+        String input = "";
+        String expected = "";
+        assertEquals(expected, HtmlPreprocessor.cleanPTags(input));
+    }
+
+    @Test
+    public void testCleanPTagsNull() {
+        assertNull(HtmlPreprocessor.cleanPTags(null));
+    }
+
+    @Test
     public void testRemoveEmptyElements() {
         String input = "Hello<div> </div>World";
         String expected = "HelloWorld";
