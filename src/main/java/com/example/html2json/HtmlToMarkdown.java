@@ -291,8 +291,8 @@ public class HtmlToMarkdown {
      * Обработка параграфа с добавлением пустой линии после.
      */
     private static void collectParagraph(Element element, StringBuilder sb) {
-        if (sb.length() > 0 && !sb.toString().endsWith("\n\n")) {
-            sb.append("\n");
+        if (sb.length() > 0) {
+            sb.append("\n\n");
         }
         collectMarkdown(element, sb);
         sb.append("\n");

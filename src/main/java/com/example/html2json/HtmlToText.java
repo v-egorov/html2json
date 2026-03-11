@@ -179,6 +179,11 @@ public class HtmlToText {
                 } else if ("ol".equals(tagName)) {
                     if (sb.length() > 0) sb.append("\n");
                     collectOrderedList(childElement, sb);
+                } else if ("p".equals(tagName)) {
+                    if (sb.length() > 0) {
+                        sb.append("\n\n");
+                    }
+                    collectText(childElement, sb, false);
                 } else if (isBlockElement(tagName)) {
                     if (sb.length() > 0) {
                         sb.append("\n");
